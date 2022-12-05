@@ -1,0 +1,94 @@
+//These Mixins should only be used a specific manner
+//this means that certain utility css classes and javascript are necessary for the intended 
+//output
+//IF this is being used for wordpress certain changes are necessary,
+// or you can use the version of this mixin which is specifically made to be used in wordpress.
+
+/*
+Responsive Navigation Menu
+*/
+@mixin navigation($break-point:500px,
+    $background:black,
+    $color:white,
+    $gap:3vw,
+    $width:50vw,
+    $height: calc(100vh - var(--height))) {
+
+    .nav-list {
+        list-style: none;
+        gap: $gap;
+
+        .nav-links {
+            color: inherit;
+            text-decoration: none;
+            font-size: inherit;
+            text-transform: inherit;
+        }
+    }
+
+    /*
+    Navigation toggle button
+    */
+    .nav-toggle {
+        display: none;
+        width: 30px;
+        height: 20px;
+        border: none;
+        background-color: transparent;
+        outline: none;
+
+        .ham {
+            background-color: $background;
+            border-radius: 100vw;
+            width: 100%;
+            height: 4px;
+        }
+    }
+
+    @media only screen and (max-width:#{$break-point}) {
+        .nav-toggle {
+            display: flex;
+            cursor: pointer;
+        }
+
+        .nav-list {
+            flex-direction: column;
+            position: fixed;
+            left: -100%;
+            gap: 0;
+            justify-content: flex-start;
+            transition: all 300ms ease-in-out;
+            width: $width;
+            height: $height;
+            top: var(--height);
+            background-color: $background;
+            color: $color;
+        }
+
+        .nav-link,
+        .nav-item {
+            width: 100%;
+            transition: 150ms;
+            padding-block: 0.5em;
+
+
+            &:hover,
+            &:focus,
+            &:focus-within {
+                background-color: $color;
+                color: $background;
+            }
+        }
+        
+        .nav-link {
+            padding-inline: 0.6em;
+            border:2px solid transparent;
+        }
+
+        .nav-list.show {
+            left: 0;
+        }
+
+        
+    }
+}

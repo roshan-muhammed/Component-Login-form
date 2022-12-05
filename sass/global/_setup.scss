@@ -1,0 +1,35 @@
+/*
+Resting default styles for all classes and anchor tags
+=========================================================
+*/
+
+
+
+$font-family: 'poppins',sans-serif;
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family:$font-family;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+body {
+    background: linear-gradient(45deg, #4b4bd3, #81c281);
+    min-height: 100vh;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 62.5%;
+}
+
+/*
+=======================================================
+*/

@@ -1,0 +1,31 @@
+@use "global" as gl;
+@use "mixins"as mix;
+
+.navigation {
+    @include mix.navigation();
+}
+
+.header {
+    width: min(1200px,100% - 2rem);
+    margin-inline: auto;
+}
+
+body {
+    background-color: crimson;
+}
+
+.logo {
+    max-width: 150px;
+}
+
+
+
+.button {
+    @include mix.button(green,yellow,red,right,100%);
+    color: white;
+    cursor: pointer;
+}
+
+.form-container {
+    @include mix.form();
+}

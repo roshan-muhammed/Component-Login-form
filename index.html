@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NavBar Mixin demo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js" type="module"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header display-flex align-items-center justify-content-space-between mx-atuo">
+            <img src="logo.png" alt="Amazon logo" class="logo">
+            <nav class="navigation display-flex">
+                <ul aria-hidden="false" class="nav-list display-flex align-items-center justify-content-space-between"
+                    id="nav-menu">
+                    <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Link1</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Link2</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Link3</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Link4</a></li>
+                </ul>
+                <button aria-expanded="false" aria-controls="nav-menu" aria-hidden="true"
+                    class="nav-toggle display-flex align-items-center justify-content-space-between flex-direction-column">
+                    <div class="ham"></div>
+                    <div class="ham"></div>
+                    <div class="ham"></div>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+
+    <div class="form-container">
+        <h1 class="form-head">Sign in</h1>
+        <p class="form-desc">Please login to use platform</p>
+        <form action="">
+            <div class="form-element-container">
+                <label class="form-label" for="name">Name</label>
+                <div class="form-element-inner">
+                    <input type="text" class="form-element validate" id="name" placeholder="Enter your name" name="name">
+                    <div class="validate-icon">
+                        <img src="images/delete.png" aria-hidden="true" alt="" />
+                    </div>
+                </div>
+                <div class="validation-errors">
+                    <div id="error-name" class="error-msg">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="form-element-container">
+                <label class="form-label" for="name">Name</label>
+                <div class="form-element-inner">
+                    <input type="password" class="form-element validate" id="password" placeholder="Enter a password" name="password">
+                    <div class="validate-icon">
+                        <img src="images/delete.png" aria-hidden="true" alt="" />
+                    </div>
+                </div>
+                <div class="validation-errors password-message">
+                    <div id="error-passwrod" class="error-msg">
+                        
+                    </div>
+                    <div id="password-strength">
+                     
+                    </div>
+                </div>
+            </div>
+            <div class="form-element-container">
+                <label class="form-label" for="phone">Phone</label>
+                <div class="form-element-inner">
+                    <input type="tel" id="phone" class="form-element validate" placeholder="enter your phone">
+                    <div class="validate-icon">
+                        <img src="images/delete.png" aria-hidden="true" alt="" />
+                    </div>
+                </div>
+                <div class="validation-errors">
+                    <div id="error-phone" class="error-msg">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="form-element-container">
+                <label class="form-label" for="date">Date</label>
+                <div class="form-element-inner">
+                    <input class="form-element validate" type="date" name="" id="date">
+                    <div class="validate-icon">
+                        <img src="images/delete.png" aria-hidden="true" alt="" />
+                    </div>
+                </div>
+                <div class="validation-errors">
+                    <div id="error-date" class="error-msg">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="form-element-container">
+                <label class="form-label" for="country">Country</label>
+                <select class="form-element" name="country" id="country">
+                    <option value="">Origin</option>
+                    <option value="">Origin</option>
+                    <option value="">Origin</option>
+                    <option value="">Origin</option>
+                    <option value="">Origin</option>
+                </select>
+            </div>
+            <div class="link-e">
+                <a href="#" class="link">
+                    Already have an account? <u> Login</u>
+                </a>
+            </div>
+            <div class="form-button">
+                <button id="form-button" type="submit">Submit button</button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+
+    </footer>
+</body>
+
+</html>

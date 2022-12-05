@@ -1,0 +1,60 @@
+@mixin button($background:purple,
+    $foreground:black,
+    $color:pink,
+    $direction:right,
+    $start:80%,
+    $end:0,
+    $content:'',
+    $inline:1em,
+    $block:1em,
+) {
+    padding: $block $inline;
+    border-radius: 5px;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    overflow: hidden;
+    position: relative;
+    transition: 300ms;
+    z-index: 1;
+    cursor: pointer;
+
+    &::before,
+    &::after {
+        content: $content;
+        position: absolute;
+        border-radius: 0;
+        inset: 0;
+    }
+
+    &::before {
+        background: $background;
+        z-index: -1;
+    }
+
+    &::after {
+        background: $foreground;
+        z-index: -1;
+        transition: 300ms ease-in-out;
+        #{$direction}:#{$start};
+
+        @if $direction==right or $direction==left {
+            top: 0;
+        }
+
+        @else {
+            left: 0;
+        }
+    }
+
+    &:hover {
+        color: $color;
+
+        &::after {
+            #{$direction}:#{$end};
+        }
+    }
+}

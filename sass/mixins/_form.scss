@@ -1,0 +1,148 @@
+@mixin form() {
+    // border:1px solid white;
+    padding: 3rem;
+    border-radius: 10px;
+    margin-inline: auto;
+    background: rgba(216, 195, 195, 0.651);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.507);
+    width: min(400px, 100% - 2rem);
+    font-weight: 500;
+    margin-block-end: 3rem;
+
+
+
+    .form-element-inner {
+        width: 100%;
+        position: relative;
+        margin-block-start: 1rem;
+
+        .validate-icon {
+            position: absolute;
+            pointer-events: none;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            padding-inline: 1.4rem;
+
+            img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+    }
+
+    .form-label {
+        font-size: 1.55rem;
+    }
+
+    .password-message {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #password-strength {
+        background-color: #ffffff7a;
+        // background-color: black;
+        border-radius: 100vw;
+        padding-inline: 1rem;
+    }
+
+
+
+    .weak {
+        color: red;
+    }
+
+    .good {
+        color: orange;
+    }
+
+    .strong {
+        color:rgb(208, 255, 0) ;
+    }
+
+    .verystrong {
+        color: green;
+    }
+
+    .excellent {
+        color: green;
+    }
+
+    .form-element,
+    .form-button button {
+        width: 100%;
+        transition: 300ms cubic-bezier(0.68, 0.4, 0.37, 0.68);
+        padding: 0.8rem 5rem 0.8rem 1.4rem;
+        font-size: 1.6rem;
+        color: black;
+        font-size: 500;
+        border: none;
+        font-weight: 500;
+        background-color: #ffffff7a;
+        border-radius: 5px;
+        outline: none;
+
+        &::placeholder {
+            color: black;
+            font-weight: 500;
+        }
+    }
+
+    .form-button button {
+        cursor: pointer;
+    }
+
+    // background: linear-gradient(45deg, #4b4bd3, #81c281);
+
+    .form-head {
+        font-size: 3rem;
+        // line-height: 2;
+        // padding:  0;
+    }
+
+    .form-desc {
+        font-size: 1.2rem;
+        padding-block-end: 2em;
+    }
+
+    .form-button button {
+        background-color: rgb(0, 0, 104);
+        color: white;
+
+        &:hover {
+            background-color: black;
+        }
+    }
+
+    .link,
+    .link-e {
+        font-size: 1.3rem;
+        padding: 2rem 1rem;
+        color: rgb(0, 0, 104);
+        text-align: center;
+        width: 100%;
+    }
+
+
+    .validation-errors {
+        font-size: 1.3rem !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 1.5rem 0.6rem 1.5rem;
+        color: red;
+    }
+
+    .form-label {
+        display: none;
+    }
+
+    select {
+        appearance: none;
+    }
+}

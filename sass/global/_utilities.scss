@@ -1,0 +1,36 @@
+/*
+Utility classes for efficient style sheet
+*/
+
+// Creating utility classes with loops and variables 
+$classNames:(display:(flex, none),
+    justify-content:(center, start, end, space-between, space-around, space-evenly),
+    align-items:(center, start, end),
+    flex-wrap:wrap,
+    flex-direction:column,
+    text-align:(center,start,end));
+
+@each $name,
+$values in $classNames {
+    @each $value in $values {
+        .#{$name}-#{$value} {
+            #{$name}:#{$value};
+        }
+    }
+}
+
+.mx-auto {
+    margin-inline: auto;
+}
+
+.no-scroll {
+    overflow: hidden;
+}
+
+.container {
+    width: min(1200px,100% - 2rem);
+    margin-inline:auto;
+}
+/*
+=============================================
+*/
