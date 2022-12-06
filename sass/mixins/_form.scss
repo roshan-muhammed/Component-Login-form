@@ -24,12 +24,14 @@
             display: flex;
             align-items: center;
             justify-content: end;
-            padding-inline: 1.4rem;
 
             img {
                 width: 20px;
                 height: 20px;
             }
+        }
+        .validate-icon:not(.password-validate-icon) {
+            padding-inline: 1.4rem;
         }
 
     }
@@ -41,28 +43,38 @@
     .password-message {
         display: flex;
         align-items: center;
+        gap: 1rem;
         justify-content: space-between;
     }
 
-    #password-strength {
-        background-color: #ffffff7a;
-        // background-color: black;
-        border-radius: 100vw;
-        padding-inline: 1rem;
-    }
 
-
-
-    .weak {
+    .invalid {
         color: red;
     }
 
+    .password-hint-group {
+        background-color: #ffffff7a;
+        border-radius: 100vw;
+        margin-inline-end:1.4rem ;
+        padding-inline-start: 1rem;
+        text-align: center;
+        white-space: nowrap;
+        display: flex;
+        font-size: 1.2rem;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .weak {
+        color: crimson;
+    }
+
     .good {
-        color: orange;
+        color: orangered;
     }
 
     .strong {
-        color:rgb(208, 255, 0) ;
+        color: orange;
     }
 
     .verystrong {
@@ -97,12 +109,9 @@
         cursor: pointer;
     }
 
-    // background: linear-gradient(45deg, #4b4bd3, #81c281);
 
     .form-head {
         font-size: 3rem;
-        // line-height: 2;
-        // padding:  0;
     }
 
     .form-desc {

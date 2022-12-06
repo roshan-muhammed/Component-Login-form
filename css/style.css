@@ -197,6 +197,10 @@ body {
   max-width: 150px;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .button {
   padding: 1em 1em;
   border-radius: 5px;
@@ -261,11 +265,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: end;
-  padding-inline: 1.4rem;
 }
 .form-container .form-element-inner .validate-icon img {
   width: 20px;
   height: 20px;
+}
+.form-container .form-element-inner .validate-icon:not(.password-validate-icon) {
+  padding-inline: 1.4rem;
 }
 .form-container .form-label {
   font-size: 1.55rem;
@@ -273,21 +279,32 @@ body {
 .form-container .password-message {
   display: flex;
   align-items: center;
+  gap: 1rem;
   justify-content: space-between;
 }
-.form-container #password-strength {
-  background-color: rgba(255, 255, 255, 0.4784313725);
-  border-radius: 100vw;
-  padding-inline: 1rem;
-}
-.form-container .weak {
+.form-container .invalid {
   color: red;
 }
+.form-container .password-hint-group {
+  background-color: rgba(255, 255, 255, 0.4784313725);
+  border-radius: 100vw;
+  margin-inline-end: 1.4rem;
+  padding-inline-start: 1rem;
+  text-align: center;
+  white-space: nowrap;
+  display: flex;
+  font-size: 1.2rem;
+  align-items: center;
+  justify-content: space-around;
+}
+.form-container .weak {
+  color: crimson;
+}
 .form-container .good {
-  color: orange;
+  color: orangered;
 }
 .form-container .strong {
-  color: rgb(208, 255, 0);
+  color: orange;
 }
 .form-container .verystrong {
   color: green;

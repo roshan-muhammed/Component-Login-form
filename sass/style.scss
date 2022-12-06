@@ -18,7 +18,9 @@ body {
     max-width: 150px;
 }
 
-
+.hidden {
+    display: none !important;
+}
 
 .button {
     @include mix.button(green,yellow,red,right,100%);
