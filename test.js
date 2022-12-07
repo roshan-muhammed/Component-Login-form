@@ -1,42 +1,16 @@
-// Rules 
-// min()
-// max()
-// empty()
-// digits()
-special()
-password()
-confirm()
-email()
-tel()
 
-const map = [{
-    name: 'date',
-    rules: {
-        empty: { value: false, message: 'Please choose a date' }
-    }
-}, {
-    name: 'email',
-    rules: {
-        email: { value: true, message: 'Please enter an email address' },
-        empty: { value: false, message: 'Email cannot be empty' }
-    }
-}]
+const value = false
 
-// for (let i in map) {
-//     if (map[i].rules.hasOwnProperty('empty')) {
-//         map[i].rules.min['empty']= `this.empty`
-//     }
-// }
-// const jsp= {
-//     name:'hidon',
-//     age:'jila'
+const map = [true,parseInt(value),1,2,4]
+const obj = 'hi'
+
+// if(0 in map ) {
+//     console.log('it works')
 // }
 
-// setProp(jsp, 'lia')
+console.log(getIt(obj))
 
-// function setProp(handle, value) {
-//     // handle.setProperty('func',value)
-//     handle.func = value
-// }
 
-eval(`console.log('${map[0].name}')`)
+function getIt(object) {
+    return object.heritage ?? 'it is working'
+}

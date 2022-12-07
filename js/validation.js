@@ -1,332 +1,295 @@
-class Validator {
+import { addListener } from "npm";
 
+class Validator {
+    /**
+     * Available rules in the @Validator class
+     * @tel => checks if the value is a valid phone number
+     * @min => checks if the value is at least min
+     * @max => checks if the value is at most max
+     * @email => checks if the value is a valid email
+     * @empty => checks if the value is not empty
+     * @digits => checks if the value has a digit
+     * @special => checks if the value has a special character
+     * @confirm => checks if the confirm field value is equal to the password value
+     * @password => returns the password strength and validates it for the given rules
+     *
+     * Each rule specified in the map as an object with
+     * @parameters
+     * func => the name of the rule
+     * value => An integer or boolean according to the rule
+     * message => Message to be showed if the rule is no followed
+     */
     format = {
+        /**
+         * @format object has the regex patterns for various validation function
+         */
+        email: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
         special: /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/,
         tel: /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/,
-        email: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
-    }
-    funcMap = {
-        min: `min`,
-        max: `max`,
-        empty: `empty`,
-        digits: `digits`,
-        special: `special`,
-        password: `password`,
-        confirm: `confirm`,
-        email: `email`,
-        tel: `tel`,
-    }
-    map = [
-        {
-            name: 'name',
-            status: 'unset',
+    };
+    strength = [
+        /**
+         * @strength array has the message which the password function returns as the strength of a password
+         */
+        'Invalid', 'Weak', 'Good', 'Strong', 'VeryStrong', 'Excellent',
+    ];
+    map = {
+        /**
+         * @map governs the the entire validation
+         * You can add field add there rules by directly accessing this object
+         */
+        password: {
+            name: 'password',
+            status: false,
+            password: {
+                /**
+                 * @password can be used to validate a password and also it can return an
+                 * object which also contains the strength of the password
+                 * @strength array inside the password object is also used to determine strength
+                 * @strength array specifies the lengths of password where strength increases
+                 */
+                strength: [9, 13],
+            },
             rules: {
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'password must not be empty',
+                },
+                min: {
+                    func: `min`,
+                    value: 6,
+                    message: 'password must be at least 6 characters',
+                },
+                max: {
+                    func: `max`,
+                    value: 16,
+                    message: 'password cannot be over 16 characters',
+                },
+                digits: {
+                    func: `digits`,
+                    value: true,
+                    message: 'password should contain at least one digit',
+                },
+            },
+        },
+        name: {
+            name: 'name',
+            status: false,
+            rules: {
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Name must not be empty',
+                },
                 min: {
                     func: `min`,
                     value: 3,
-                    message: 'Name must be at least 3 characters'
+                    message: 'Name must be at least 3 characters',
                 },
                 max: {
                     func: `max`,
                     value: 20,
-                    message: 'Name must be at most 20 characters'
-                },
-                empty: {
-                    func: `empty`,
-                    value: false,
-                    message: 'Name must not be empty'
+                    message: 'Name must be at most 20 characters',
                 },
                 digits: {
                     func: `digits`,
                     value: false,
-                    message: 'Name can only contain alphabets'
+                    message: 'Name can only contain alphabets',
                 },
                 special: {
                     func: `empty`,
                     value: false,
-                    message: 'Name can only contain alphabets'
-                }
-            }
-        }, {
-            name: 'password',
-            status: 'unset',
-            rules: {
-                password: {
-                    min: {
-                        func: `min`,
-                        value: 6,
-                        message: 'password must be at least 6 characters'
-                    },
-                    max: {
-                        func: `max`,
-                        value: 16,
-                        message: 'password cannot be over 16 characters'
-                    },
-                    empty: {
-                        func: `empty`,
-                        value: false,
-                        message: 'password must not be empty'
-                    },
-                    digits: {
-                        func: `digits`,
-                        value: true,
-                        message: 'password should contain at least one digit'
-                    }
-                }
-            }
-        }, {
+                    message: 'Name can only contain alphabets',
+                },
+            },
+        },
+        confirm: {
             name: 'confirm',
-            status: 'unset',
+            status: false,
             rules: {
                 confirm: {
                     func: `confirm`,
                     points: 'password',
-                    message: 'passwords does not match'
+                    message: 'passwords does not match',
                 },
-            }
-        }, {
+            },
+        },
+        phone: {
             name: 'phone',
-            status: 'unset',
+            status: false,
             rules: {
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Phone number cannot be empty',
+                },
                 tel: {
                     func: `tel`,
                     value: true,
-                    message: 'Please enter a valid phone number'
+                    message: 'Please enter a valid phone number',
                 },
-                empty: {
-                    func: `empty`,
-                    value: false,
-                    message: 'Phone number cannot be empty'
-                }
-            }
-        }, {
+            },
+        },
+        date: {
             name: 'date',
-            status: 'unset',
+            status: false,
             rules: {
                 empty: {
                     func: `empty`,
                     value: false,
-                    message: 'Please choose a date'
-                }
-            }
-        }, {
+                    message: 'Please choose a date',
+                },
+            },
+        },
+        email: {
             name: 'email',
-            status: 'unset',
+            status: false,
             rules: {
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Email cannot be empty',
+                },
                 email: {
                     func: `email`,
                     value: true,
-                    message: 'Please enter an email address'
+                    message: 'Please enter an email address',
                 },
-                empty: {
-                    func: `empty`,
-                    value: false,
-                    message: 'Email cannot be empty'
-                }
+            },
+        },
+    };
+
+    elementMap = {
+        strength: {},
+        values: [],
+        errors: [],
+    }
+
+    constructor(formElements, errorBoxes, strengthBox) {
+        /**
+         * @constructor takes array of the form elements in the dom as parameters
+         */
+        this.elementMap.strength = strengthBox
+        for (let i in formElements) {
+            this.elementMap.values[formElements[i].name] = formElements[i];
+            this.elementMap.errors[formElements[i].name] = errorBoxes[i];
+        }
+    }
+
+    /**
+     * @functions Corresponding to @rules
+     * -------------------------------------
+     * Each of these functions returns the output of the condition immediately
+     * For rules which take boolean values it can return values according to value
+     * set in the rule.
+     * @Example : If a field should have special characters set the rule as special:true,
+     * if it should not contain any special characters,then set rule as special:false
+     **/
+    max(value, handle) {
+        return value.length >= (handle.value ?? handle);
+    }
+
+    min(value, handle) {
+        return value.length <= (handle.value ?? handle);
+    }
+
+    empty(value, handle, status = true) {
+        return (value === '') === (handle.value ?? status);
+    }
+
+    digits(value, handle, status = true) {
+        return /[0-9]/.test(value) === (handle.value ?? status);
+    }
+
+    tel(value, handle, status = true) {
+        return this.format.tel.test(value) === (handle.value ?? status);
+    }
+
+    email(value, handle, status = true) {
+        return this.format.email.test(value) === (handle.value ?? status);
+    }
+
+    special(value, handle, status = true) {
+        return this.format.special.test(value) === (handle.value ?? status);
+    }
+
+    confirm(password, confirm, status = true) {
+        return (password.value === confirm.value) === (handle.value ?? status);
+    }
+
+    password(element) {
+        /**
+         * @password can return a strength of a password 
+         * the return value can be from 1 to 5
+         * each of these are password strength scores
+         */
+
+        let strength;
+        element.status && this.validate(element.rules);
+
+        strength++;
+        this.digits(this.elementMap.values[element.name].value, true) && strength++;
+        this.special(this.elementMap.values[element.name].value, true) && strength++;
+        this.min(this.elementMap.values[element.name].value, element.password.strength[0]) && strength++;
+        this.min(this.elementMap.values[element.name].value, element.password.strength[1]) && strength++;
+
+        this.showStrength(strength)
+    }
+
+    validate(element) {
+        /**
+         * @validate can take each rule from the element object and validate for
+         * all of its rules
+         **/
+        for (let i in element.rules) {
+            if (!eval(`this.${element.rules[i].func}(elementMap.values[element.name].value,element.rules[i])`)) {
+                this.showError(element, element.rules[i].message);
+                return false;
             }
         }
-    ]
-    constructor(formElements, errorBox, map) {
-        this.elements = formElements
-        this.errorBox = errorBox
-        if (map != undefined) this.map = map
+        element.status = true;
+        element.hasOwnProperty('password') && this.password(element)
+        return true;
     }
 
-    validate(element, item) {
-        let results = []
-        for (let i in item.rules) {
-            results[i] = eval(`this.${item.rules[i].func}(element.value,item.rules[i])`)
-        }
-    }
-
-    password(element, handle) {
-        let results = this.validate(element, handle)
-        
-    }
-    // Declared Usable Rules 
-    min(value, handle) {
-        if (value.length < handle.value) {
-            return handle.message
-        }
-        return false
-    }
-
-    max(value, handle) {
-        if (value.length > handle.value) {
-            return handle.message
-        }
-        return false
-    }
-
-    empty(value, handle) {
-        if (value === '') {
-            return handle.message
-        }
-        return false
-    }
-
-    email(value, handle) {
-        if (!this.format.email.test(value)) {
-            return handle.message
-        }
-        return false
-    }
-
-    tel(value, handle) {
-        if (!this.format.tel.test(value)) {
-
-        }
-    }
-
-    confirm() {
-
-    }
-    digits(value, handle) {
-        if (/[0-9]/.test(value)) {
-            return handle.message
+    validateAll() {
+        /**
+         * @validateAll can validate all the fields by calling @validate method on all fields
+         */
+        for (let i in this.map) {
+            this.validate(this.map[i]);
         }
 
-    }
-
-    special(value, handle) {
-        if (this.format.special.test(value) && handle.value) {
-            return handle.message
-        }
-    }
-
-
-
-
-    validateName(value, min, max, name = 'name') {
-        let status = true
-        let message = `valid ${name}`
-        if (value === '') {
-            status = false
-            message = `Please enter your ${name}`
-        } else if (/[0-9]/.test(value)) {
-            status = false
-            message = `${name} can't contain digits`
-        } else if (value.length < min) {
-            status = false
-            message = `${name} should be at least ${min} characters`
-        } else if (value.length > max) {
-            status = false
-            message = `${name} can't be over ${max} characters`
-        }
-        if (status) message = ''
-        this.fillable[name] = status
-        return { status: status, message: message }
-    }
-
-    validatePassword(value, min = 6, max = 16, digits = true, special = false, name = 'password') {
-        let message
-        let status = true
-        let strengthScore = 0
-        let minStatus = true
-        let len = max - value.length
-        const strength = ['invalid', 'weak', 'good', 'strong', 'very strong', 'excellent']
-        if (value === '') {
-            this.message.email = `Please enter your password`
-            status = false
-            minStatus = false
-        } else if (value.length < min) {
-            message = `Should be at least ${min} characters`
-            status = false
-            minStatus = false
-        } else if (value.length > max) {
-            message = `Password can't be over ${max} characters`
-            status = false
-            minStatus = false
-            strengthScore = 0
-        } else if (!/[A-Z]/.test(value)) {
-            status = false
-            message = `Should contain 1 upper case letter`
-        } else if (!/[0-9]/.test(value) && digits) {
-            message = `Should contain at least 1 digit`
-            status = false
-        } else if (!this.format.special.test(value) && special) {
-            message = `Should contain at least 1 special character`
-            status = false
-        }
-        if (len > 0) {
-            if (len < 3) strengthScore += 2
-            else if (len < 7) strengthScore++
-
-        }
-        if (minStatus && /[A-Z]/.test(value)) strengthScore++
-
-        if (minStatus && /[0-9]/.test(value)) strengthScore++
-
-
-        if (minStatus && format.test(value)) strengthScore++
-        this.fillable[name] = status
-        return { status: status, message: message, strength: strength[strengthScore] }
-    }
-
-    confirmPassword(password, confirm, name = 'confirm') {
-        let status = true
-        let message = ''
-        if (password != confirm || password == '') {
-            status = false
-            message = `Passwords do not match`
+        for (let i in this.map) {
+            if (!this.map[i].status) {
+                return false
+            }
         }
 
-        this.fillable[name] = status
-        return { status: status, message: message }
-    }
-
-    validatePhone(value, name = 'phone') {
-        let message = ''
-
-        let status = true
-        if (value.length < 7) {
-            status = false
-            this.message.email = 'Phone number should be at least 7 digits long'
-        }
-        if (!this.format.phone.test(value)) {
-            status = false
-            message = `Please enter a valid phone number`
-        }
-
-        this.fillable[name] = status
-        return { status: status, message: message }
-    }
-
-
-    validateDate(value, name = 'date') {
-        let message = ''
-        let status = true
-        if (value == '') {
-            status = false
-            message = `Please choose a date`
-        }
-        this.fillable[name] = status
-        return { status: status, message: message }
-    }
-
-    validateEmail(value, name = 'email') {
-        let message = ''
-        let status = true
-        if (!this.format.email.test(value)) {
-            status = false
-            message = `Please enter a valid email`
-        }
-        this.fillable[name] = status
-        return { status: status, message: message }
-    }
-
-    checkFillable() {
-        for (let state in this.fillable) {
-            if (this.fillable[state] === false) return false
-        }
         return true
     }
 
-    showError(error, item) {
-        if (!error.status) {
-            this.errorBox
+    showError(item, message) {
+        item.status = false;
+        this.elementMap.errors[item.name].innerHTML = message;
+    }
+
+    showStrength(strength) {
+        this.elementMap.strength.innerHTML = this.strength[strength];
+    }
+
+    addValidator(element) {
+        this.validate(this.map[element].)
+    }
+
+    addListeners() {
+        for (let i in this.elementMap.values) {
+            this.elementMap.values[i].addEventListener('input', () => {
+                addValidator(this.elementMap.values[i].name)
+            })
         }
     }
 }
 
-export default Validator
+export default Validator;

@@ -282,7 +282,7 @@ body {
   gap: 1rem;
   justify-content: space-between;
 }
-.form-container .invalid {
+.form-container .Invalid {
   color: red;
 }
 .form-container .password-hint-group {
@@ -297,19 +297,19 @@ body {
   align-items: center;
   justify-content: space-around;
 }
-.form-container .weak {
+.form-container .Weak {
   color: crimson;
 }
-.form-container .good {
+.form-container .Good {
   color: orangered;
 }
-.form-container .strong {
+.form-container .Strong {
   color: orange;
 }
-.form-container .verystrong {
+.form-container .VeryStrong {
   color: green;
 }
-.form-container .excellent {
+.form-container .Excellent {
   color: green;
 }
 .form-container .form-element,
