@@ -2,66 +2,127 @@ class Validator {
 
     format = {
         special: /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/,
-        phone: /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/,
+        tel: /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/,
         email: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
     }
     funcMap = {
-        min: `this.min`,
-        max: `this.max`,
-        empty: `this.empty`,
-        digits: `this.digits`,
-        special: `this.special`,
-        password: `this.password`,
-        confirm: `this.confirm`,
-        email: `this.email`,
-        tel: `this.tel`,
+        min: `min`,
+        max: `max`,
+        empty: `empty`,
+        digits: `digits`,
+        special: `special`,
+        password: `password`,
+        confirm: `confirm`,
+        email: `email`,
+        tel: `tel`,
     }
     map = [
         {
             name: 'name',
             status: 'unset',
             rules: {
-                min: { func: `this.min`, value: 3, message: 'Name must be at least 3 characters' },
-                max: { func: `this.max`, value: 20, message: 'Name must be at most 20 characters' },
-                empty: { func: `this.empty`, value: false, message: 'Name must not be empty' },
-                digits: { func: `this.digits`, value: false, message: 'Name can only contain alphabets' },
-                special: { func: `this.empty`, values: false, message: 'Name can only contain alphabets' }
+                min: {
+                    func: `min`,
+                    value: 3,
+                    message: 'Name must be at least 3 characters'
+                },
+                max: {
+                    func: `max`,
+                    value: 20,
+                    message: 'Name must be at most 20 characters'
+                },
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Name must not be empty'
+                },
+                digits: {
+                    func: `digits`,
+                    value: false,
+                    message: 'Name can only contain alphabets'
+                },
+                special: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Name can only contain alphabets'
+                }
             }
         }, {
             name: 'password',
             status: 'unset',
             rules: {
-                password: true,
-                min: { func: `this.min`, value: 6, message: 'password must be at least 6 characters' },
-                max: { func: `this.max`, value: 16, message: 'password cannot be over 16 characters' },
-                empty: { func: `this.empty`, value: false, message: 'password must not be empty' },
-                digits: { func: `this.digits`, value: true, message: 'password should contain at least one digit' },
+                password: {
+                    min: {
+                        func: `min`,
+                        value: 6,
+                        message: 'password must be at least 6 characters'
+                    },
+                    max: {
+                        func: `max`,
+                        value: 16,
+                        message: 'password cannot be over 16 characters'
+                    },
+                    empty: {
+                        func: `empty`,
+                        value: false,
+                        message: 'password must not be empty'
+                    },
+                    digits: {
+                        func: `digits`,
+                        value: true,
+                        message: 'password should contain at least one digit'
+                    }
+                }
             }
         }, {
             name: 'confirm',
             status: 'unset',
             rules: {
-                confirm: { func: `this.confirm`, points: 'password', message: 'passwords does not match' },
+                confirm: {
+                    func: `confirm`,
+                    points: 'password',
+                    message: 'passwords does not match'
+                },
             }
         }, {
             name: 'phone',
             status: 'unset',
             rules: {
-                tel: { func: `this.tel`, value: true, message: 'Please enter a valid phone number' },
-                empty: { func: `this.empty`, value: false, message: 'Phone number cannot be empty' }
+                tel: {
+                    func: `tel`,
+                    value: true,
+                    message: 'Please enter a valid phone number'
+                },
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Phone number cannot be empty'
+                }
             }
         }, {
             name: 'date',
             status: 'unset',
             rules: {
-                empty: { func: `this.empty`, value: false, message: 'Please choose a date' }
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Please choose a date'
+                }
             }
         }, {
             name: 'email',
             status: 'unset',
             rules: {
-                email: { func: `this.email`, value: true, message: 'Please enter an email address' },
-                empty: { func: `this.empty`, value: false, message: 'Email cannot be empty' }
+                email: {
+                    func: `email`,
+                    value: true,
+                    message: 'Please enter an email address'
+                },
+                empty: {
+                    func: `empty`,
+                    value: false,
+                    message: 'Email cannot be empty'
+                }
             }
         }
     ]
@@ -71,19 +132,16 @@ class Validator {
         if (map != undefined) this.map = map
     }
 
-    // setRules() {
-    //     for (let i in this.map) {
-    //         if (this.map[i].rules.hasOwnProperty('min')) {
-    //             this.map[i].rules.min.func = `this.func`
-    //         }
-    //     }
-    // }
-
     validate(element, item) {
-        // let result = true
+        let results = []
         for (let i in item.rules) {
-            eval(`${item.rules[i].func}(element.value,item.rules[i])`)
+            results[i] = eval(`this.${item.rules[i].func}(element.value,item.rules[i])`)
         }
+    }
+
+    password(element, handle) {
+        let results = this.validate(element, handle)
+        
     }
     // Declared Usable Rules 
     min(value, handle) {
@@ -107,9 +165,25 @@ class Validator {
         return false
     }
 
+    email(value, handle) {
+        if (!this.format.email.test(value)) {
+            return handle.message
+        }
+        return false
+    }
+
+    tel(value, handle) {
+        if (!this.format.tel.test(value)) {
+
+        }
+    }
+
+    confirm() {
+
+    }
     digits(value, handle) {
         if (/[0-9]/.test(value)) {
-           return handle.message
+            return handle.message
         }
 
     }
@@ -119,6 +193,8 @@ class Validator {
             return handle.message
         }
     }
+
+
 
 
     validateName(value, min, max, name = 'name') {

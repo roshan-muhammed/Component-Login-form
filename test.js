@@ -3,11 +3,11 @@
 // max()
 // empty()
 // digits()
-// special()
-// password()
-// confirm()
-// email()
-// tel()
+special()
+password()
+confirm()
+email()
+tel()
 
 const map = [{
     name: 'date',
