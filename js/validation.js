@@ -1,6 +1,5 @@
-
 class Validator {
-    /**
+    /** 
      * Available rules in the @Validator class
      * @tel => checks if the value is a valid phone number
      * @min => checks if the value is at least min
@@ -18,6 +17,13 @@ class Validator {
      * value => An integer or boolean according to the rule
      * message => Message to be showed if the rule is no followed
      */
+    strength = [
+        /**
+         * @strength array has the message which the password function returns as the strength of a password
+         */
+        'Invalid', 'Weak', 'Ok', 'Good', 'Strong', 'VeryStrong', 'Excellent',
+    ];
+
     format = {
         /**
          * @format object has the regex patterns for various validation function
@@ -26,20 +32,17 @@ class Validator {
         special: /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/,
         tel: /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/,
     };
-    strength = [
-        /**
-         * @strength array has the message which the password function returns as the strength of a password
-         */
-        'Invalid', 'Weak', 'Ok', 'Good', 'Strong', 'VeryStrong', 'Excellent',
-    ];
+
     map = {
         /**
          * @map governs the the entire validation
          * You can add field add there rules by directly accessing this object
+         * in your main file
          */
         password: {
             name: 'password',
             status: false,
+            invoked: false,
             password: {
                 /**
                  * @password can be used to validate a password and also it can return an
@@ -50,6 +53,10 @@ class Validator {
                 strength: [9, 13],
             },
             rules: {
+                /**
+                 * While adding @rules by accessing the map object 
+                 * you need to @sort them in the @order it need to be validated
+                 */
                 empty: {
                     func: `empty`,
                     value: false,
@@ -80,6 +87,7 @@ class Validator {
         name: {
             name: 'name',
             status: false,
+            invoked: false,
             rules: {
                 empty: {
                     func: `empty`,
@@ -111,13 +119,16 @@ class Validator {
         confirm: {
             name: 'confirm',
             status: false,
+            invoked: false,
             confirm: {
                 message: 'passwords does not match',
+                noPassword: 'please don\'t forget to fill the password field',
             },
         },
         phone: {
             name: 'phone',
             status: false,
+            invoked: false,
             rules: {
                 empty: {
                     func: `empty`,
@@ -134,6 +145,7 @@ class Validator {
         date: {
             name: 'date',
             status: false,
+            invoked: false,
             rules: {
                 empty: {
                     func: `empty`,
@@ -145,6 +157,7 @@ class Validator {
         email: {
             name: 'email',
             status: false,
+            invoked: false,
             rules: {
                 empty: {
                     func: `empty`,
@@ -162,7 +175,6 @@ class Validator {
 
     elementMap = {
         hint: {},
-        invoke: {},
         icons: [],
         values: [],
         errors: [],
@@ -178,12 +190,10 @@ class Validator {
         let i = 0
         this.elementMap.hint = props.hint;
         this.elementMap.icons = props.icons;
-        this.elementMap.invoke = props.invoke;
         this.elementMap.strength = props.strength;
-        this.elementMap.invoke.addEventListener('click', this.validateAll)
 
         for (let element of props.formFields) {
-            this.addListeners(element)
+            this.addValidators(element)
             this.elementMap.values[element.name] = element;
             this.elementMap.errors[element.name] = props.errorBoxes[i];
             this.elementMap.hintIcons[element.name] = props.hintIcons[i++]
@@ -193,7 +203,8 @@ class Validator {
     /**
      * @functions Corresponding to @rules
      * -------------------------------------
-     * Each of these functions returns the output of the condition immediately
+     * Each @rule returns a boolean value
+     * Each of these functions returns the output of the condition immediately.
      * For rules which take boolean values it can return values according to value
      * set in the rule.
      * @Example : If a field should have special characters set the rule as special:true,
@@ -231,9 +242,18 @@ class Validator {
         return this.format.special.test(value) === handle;
     }
 
-    confirm(value, handle = true) {
-        return (value === handle && value != '') === handle;
+    confirm(value, handle) {
+        if (!this.map.password.status) return;
+        return (value != '') && (value === handle);
     }
+
+    /**
+    * More rules can be added to this class which takes the 2 @parameters
+    * @param1 should be the value to be validated
+    * @param2 should be the handle which governs further changes in the output
+    * The @return value should be true if validation was successful
+    * else it should be false,which indicates that the value is invalid 
+    */
 
     password(element) {
         /**
@@ -241,6 +261,8 @@ class Validator {
          * the return value can be from 1 to 5
          * each of these are password strength scores
          */
+        if (this.map.confirm.invoked) this.validate(this.map.confirm)
+
         let strength = 0;
         if (!element.status) {
             this.showStrength(strength);
@@ -270,14 +292,18 @@ class Validator {
          * @validate can take each rule from the element object and validate for
          * all of its rules
          **/
-
         if (element.hasOwnProperty('confirm')) {
-            let check =  this.confirm(this.elementMap.values[element.name].value,this.elementMap.values['password'].value);
-            console.log(this.elementMap.values[element.name].value,this.elementMap.values['password'].value,check)
-            check && this.showError(element,element.confirm.message);
+            let check = this.confirm(this.elementMap.values[element.name].value, this.elementMap.values['password'].value);
+
+            if (check === undefined) {
+                element.status = 2;
+                this.showError(element, element.confirm.noPassword);
+                return
+            }
+            !check ? this.showError(element, element.confirm.message) : this.showError(element, '');
             return
         }
-        
+
         let boilerPlate = '(this.elementMap.values[element.name].value,element.rules[i].value)';
         for (let i in element.rules) {
             if (!eval(`this.${element.rules[i].func + boilerPlate}`)) {
@@ -292,34 +318,32 @@ class Validator {
         return true;
     }
 
-    validateAll(event) {
+    validateAll() {
         /**
          * @validateAll can validate all the fields by calling @validate method on all fields
          */
-        event.preventDefault();
-        for (let i in this.elementMap.values) {
-            this.validate(this.map[this.elementMap.values[i]]);
-        }
-
+        let check = true;
         for (let i in this.map) {
-            if (!this.map[i].status) {
-                return false
-            }
+            if (this.map[i].status) continue;
+            this.validate(this.map[i]);
+            check = false;
         }
-
-        this.elementMap.invoke.removeEventListener('click', this.validateAll);
-        return true
+        return check;
     }
 
     showError(element, message) {
-        element.status = (message === '') ? true : false;
+        /**
+         * Shows the error message if not valid 
+         * Also sets the status icon according to the validation result
+         */
         this.elementMap.errors[element.name].innerHTML = message;
         this.elementMap.hintIcons[element.name].classList.remove('hidden');
+        if (element.status !== 2) element.status = (message === '') ? true : false;
         this.elementMap.hintIcons[element.name].src = this.elementMap.icons[element.status + 0];
+        element.status = element.status && true;
     }
 
     showStrength(strength) {
-        console.log(strength);
         this.elementMap.strength.innerHTML = this.strength[strength];
         this.elementMap.strength.className = this.strength[strength];
 
@@ -328,15 +352,13 @@ class Validator {
         }
     }
 
-    addValidator(element) {
-        this.validate(this.map[element]);
-    }
-
-    addListeners(element) {
+    addValidators(element) {
         element.addEventListener('input', () => {
+            this.map[element.name].invoked = true;
             this.validate(eval(`this.map.${element.name}`));
         })
     }
 }
+
 
 export default Validator;
