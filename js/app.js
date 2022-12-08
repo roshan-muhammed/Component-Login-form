@@ -32,12 +32,6 @@ function accessibility() {
 
 const v = new Validator(formElements, errorBox, passwordStrength)
 
-// for(let i in v.elementMap.values) {
-//     console.log(v.elementMap.values[i])
-//     // element.addEventListener('input',()=>{
-//     //     // v.validate(z.map)
-//     //     console.log(this)
-//     // })
-// }
+
 
 
