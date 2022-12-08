@@ -297,7 +297,7 @@ body {
   align-items: center;
   justify-content: space-around;
 }
-.form-container .Weak {
+.form-container .Weak, .form-container .Ok {
   color: crimson;
 }
 .form-container .Good {

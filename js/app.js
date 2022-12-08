@@ -30,8 +30,14 @@ function accessibility() {
     }
 }
 
-const v = new Validator(formElements, errorBox, passwordStrength)
-
-
+const validator = new Validator({
+    invoke:formButton,
+    errorBoxes:errorBox,
+    hintIcons:validateIcon,
+    hint:passwordHintGroup,
+    formFields:formElements,
+    strength:passwordStrength,
+    icons:['images/delete.png', 'images/check.png']
+})
 
 

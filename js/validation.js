@@ -1,4 +1,3 @@
-import { addListener } from "npm";
 
 class Validator {
     /**
@@ -31,7 +30,7 @@ class Validator {
         /**
          * @strength array has the message which the password function returns as the strength of a password
          */
-        'Invalid', 'Weak', 'Good', 'Strong', 'VeryStrong', 'Excellent',
+        'Invalid', 'Weak', 'Ok', 'Good', 'Strong', 'VeryStrong', 'Excellent',
     ];
     map = {
         /**
@@ -65,6 +64,11 @@ class Validator {
                     func: `max`,
                     value: 16,
                     message: 'password cannot be over 16 characters',
+                },
+                upper: {
+                    func: 'upper',
+                    value: true,
+                    message: 'password must contain at least one uppercase letter',
                 },
                 digits: {
                     func: `digits`,
@@ -107,12 +111,8 @@ class Validator {
         confirm: {
             name: 'confirm',
             status: false,
-            rules: {
-                confirm: {
-                    func: `confirm`,
-                    points: 'password',
-                    message: 'passwords does not match',
-                },
+            confirm: {
+                message: 'passwords does not match',
             },
         },
         phone: {
@@ -161,19 +161,32 @@ class Validator {
     };
 
     elementMap = {
-        strength: {},
+        hint: {},
+        invoke: {},
+        icons: [],
         values: [],
         errors: [],
+        strength: {},
+        hintIcons: [],
     }
 
-    constructor(formElements, errorBoxes, strengthBox) {
+    constructor(props) {
         /**
          * @constructor takes array of the form elements in the dom as parameters
          */
-        this.elementMap.strength = strengthBox
-        for (let i in formElements) {
-            this.elementMap.values[formElements[i].name] = formElements[i];
-            this.elementMap.errors[formElements[i].name] = errorBoxes[i];
+
+        let i = 0
+        this.elementMap.hint = props.hint;
+        this.elementMap.icons = props.icons;
+        this.elementMap.invoke = props.invoke;
+        this.elementMap.strength = props.strength;
+        this.elementMap.invoke.addEventListener('click', this.validateAll)
+
+        for (let element of props.formFields) {
+            this.addListeners(element)
+            this.elementMap.values[element.name] = element;
+            this.elementMap.errors[element.name] = props.errorBoxes[i];
+            this.elementMap.hintIcons[element.name] = props.hintIcons[i++]
         }
     }
 
@@ -187,35 +200,39 @@ class Validator {
      * if it should not contain any special characters,then set rule as special:false
      **/
     max(value, handle) {
-        return value.length >= (handle.value ?? handle);
+        return value.length <= handle;
     }
 
     min(value, handle) {
-        return value.length <= (handle.value ?? handle);
+        return value.length >= handle;
     }
 
-    empty(value, handle, status = true) {
-        return (value === '') === (handle.value ?? status);
+    empty(value, handle = true) {
+        return (value === '') === handle;
     }
 
-    digits(value, handle, status = true) {
-        return /[0-9]/.test(value) === (handle.value ?? status);
+    upper(value, handle = true) {
+        return /[A-Z]/.test(value) === handle;
     }
 
-    tel(value, handle, status = true) {
-        return this.format.tel.test(value) === (handle.value ?? status);
+    digits(value, handle = true) {
+        return /[0-9]/.test(value) === handle;
     }
 
-    email(value, handle, status = true) {
-        return this.format.email.test(value) === (handle.value ?? status);
+    tel(value, handle = true) {
+        return this.format.tel.test(value) === handle;
     }
 
-    special(value, handle, status = true) {
-        return this.format.special.test(value) === (handle.value ?? status);
+    email(value, handle = true) {
+        return this.format.email.test(value) === handle;
     }
 
-    confirm(password, confirm, status = true) {
-        return (password.value === confirm.value) === (handle.value ?? status);
+    special(value, handle = true) {
+        return this.format.special.test(value) === handle;
+    }
+
+    confirm(value, handle = true) {
+        return (value === handle && value != '') === handle;
     }
 
     password(element) {
@@ -224,15 +241,26 @@ class Validator {
          * the return value can be from 1 to 5
          * each of these are password strength scores
          */
-
-        let strength;
-        element.status && this.validate(element.rules);
+        let strength = 0;
+        if (!element.status) {
+            this.showStrength(strength);
+            return
+        }
 
         strength++;
-        this.digits(this.elementMap.values[element.name].value, true) && strength++;
-        this.special(this.elementMap.values[element.name].value, true) && strength++;
-        this.min(this.elementMap.values[element.name].value, element.password.strength[0]) && strength++;
-        this.min(this.elementMap.values[element.name].value, element.password.strength[1]) && strength++;
+        if (!(this.elementMap.values[element.name].value.length >= 7)) {
+            this.showStrength(strength)
+            return
+        }
+
+        let Special = this.special(this.elementMap.values[element.name].value, true) && strength++;
+        let Upper = (/[A-Z].*[A-Z]/).test(this.elementMap.values[element.name].value) && strength++;
+        let Digits = (/[0-9].*[0-9]/).test(this.elementMap.values[element.name].value) && strength++;
+
+        if (Special || Digits || Upper) {
+            if (this.elementMap.values[element.name].value.length > element.password.strength[0]) strength++;
+            if (this.elementMap.values[element.name].value.length > element.password.strength[1]) strength++;
+        }
 
         this.showStrength(strength)
     }
@@ -242,23 +270,35 @@ class Validator {
          * @validate can take each rule from the element object and validate for
          * all of its rules
          **/
+
+        if (element.hasOwnProperty('confirm')) {
+            let check =  this.confirm(this.elementMap.values[element.name].value,this.elementMap.values['password'].value);
+            console.log(this.elementMap.values[element.name].value,this.elementMap.values['password'].value,check)
+            check && this.showError(element,element.confirm.message);
+            return
+        }
+        
+        let boilerPlate = '(this.elementMap.values[element.name].value,element.rules[i].value)';
         for (let i in element.rules) {
-            if (!eval(`this.${element.rules[i].func}(elementMap.values[element.name].value,element.rules[i])`)) {
+            if (!eval(`this.${element.rules[i].func + boilerPlate}`)) {
                 this.showError(element, element.rules[i].message);
+                element.hasOwnProperty('password') && this.password(element);
                 return false;
             }
         }
-        element.status = true;
-        element.hasOwnProperty('password') && this.password(element)
+
+        this.showError(element, '');
+        element.hasOwnProperty('password') && this.password(element);
         return true;
     }
 
-    validateAll() {
+    validateAll(event) {
         /**
          * @validateAll can validate all the fields by calling @validate method on all fields
          */
-        for (let i in this.map) {
-            this.validate(this.map[i]);
+        event.preventDefault();
+        for (let i in this.elementMap.values) {
+            this.validate(this.map[this.elementMap.values[i]]);
         }
 
         for (let i in this.map) {
@@ -267,28 +307,35 @@ class Validator {
             }
         }
 
+        this.elementMap.invoke.removeEventListener('click', this.validateAll);
         return true
     }
 
-    showError(item, message) {
-        item.status = false;
-        this.elementMap.errors[item.name].innerHTML = message;
+    showError(element, message) {
+        element.status = (message === '') ? true : false;
+        this.elementMap.errors[element.name].innerHTML = message;
+        this.elementMap.hintIcons[element.name].classList.remove('hidden');
+        this.elementMap.hintIcons[element.name].src = this.elementMap.icons[element.status + 0];
     }
 
     showStrength(strength) {
+        console.log(strength);
         this.elementMap.strength.innerHTML = this.strength[strength];
+        this.elementMap.strength.className = this.strength[strength];
+
+        if (this.elementMap.hint.classList.contains('hidden')) {
+            this.elementMap.hint.classList.remove('hidden');
+        }
     }
 
     addValidator(element) {
-        this.validate(this.map[element].)
+        this.validate(this.map[element]);
     }
 
-    addListeners() {
-        for (let i in this.elementMap.values) {
-            this.elementMap.values[i].addEventListener('input', () => {
-                addValidator(this.elementMap.values[i].name)
-            })
-        }
+    addListeners(element) {
+        element.addEventListener('input', () => {
+            this.validate(eval(`this.map.${element.name}`));
+        })
     }
 }
 
