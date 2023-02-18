@@ -29,7 +29,7 @@ class Validator {
          * @format object has the regex patterns for various validation function
          */
         email: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
-        special: /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/,
+        special: /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/,
         tel: /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/,
     };
 
@@ -110,7 +110,7 @@ class Validator {
                     message: 'Name can only contain alphabets',
                 },
                 special: {
-                    func: `empty`,
+                    func: `special`,
                     value: false,
                     message: 'Name can only contain alphabets',
                 },
